@@ -1,1 +1,9 @@
-
+{
+  "apiKey": "AIzaSyC97efteiolYeU28esY-XEf5QkUXzOdr7o",
+  "authDomain": "helpdesk-ti-movil.firebaseapp.com",
+  "projectId": "helpdesk-ti-movil",
+  "storageBucket": "helpdesk-ti-movil.firebasestorage.app",
+  "messagingSenderId": "1053592336778",
+  "appId": "1:1053592336778:web:8eaaa2d8855b89122f7073",
+  "firestoreDatabaseId": "(default)"
+}
