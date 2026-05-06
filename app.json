@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "HelpDesk TI Móvil",
+    "slug": "helpdesk-ti-movil",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.empresa.helpdesk"
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

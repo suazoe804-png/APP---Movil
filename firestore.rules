@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- PRIMITIVES ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isTimestampValid(timeField) {
+       // Just ensuring it's a number (timestamp) since JS Date.now() is a number.
+       // Note: Native firestore timestamp is sometimes different, but since we are saving Date.now(), it's an int.
+       return timeField is number;
+    }
+
+    // --- BLUEPRINTS ---
+    function isValidSolicitud(data) {
+      // Keys check
+      let hasKeys = data.keys().hasAll(['nombre', 'area', 'tipoProblema', 'descripcion', 'estatus', 'fechaCreacion', 'fechaActualizacion', 'userId']);
+      let exactSize = data.keys().size() == 8;
+      
+      let nombreOk = data.nombre is string && data.nombre.size() > 0 && data.nombre.size() <= 100;
+      let areaOk = data.area is string && data.area.size() > 0 && data.area.size() <= 60;
+      let tipoOk = data.tipoProblema is string && data.tipoProblema.size() > 0 && data.tipoProblema.size() <= 60;
+      let descOk = data.descripcion is string && data.descripcion.size() > 0 && data.descripcion.size() <= 1500;
+      let estatusOk = data.estatus in ['Pendiente', 'En proceso', 'Atendido', 'Cancelado'];
+      let userIdOk = data.userId is string;
+      let datesOk = isTimestampValid(data.fechaCreacion) && isTimestampValid(data.fechaActualizacion);
+
+      return hasKeys && exactSize && nombreOk && areaOk && tipoOk && descOk && estatusOk && userIdOk && datesOk;
+    }
+
+    // --- COLLECTIONS ---
+    match /solicitudes/{solicitudId} {
+      // Any authenticated user can read list
+      allow read: if isSignedIn() && isValidId(solicitudId);
+      allow list: if isSignedIn(); // In internal app, everyone sees list.
+
+      allow create: if isSignedIn() 
+        && isValidId(solicitudId)
+        && isValidSolicitud(incoming())
+        && incoming().userId == request.auth.uid;
+
+      allow update: if isSignedIn()
+        && isValidId(solicitudId)
+        && isValidSolicitud(incoming())
+        && incoming().userId == existing().userId // Identity integrity preserved
+        && incoming().fechaCreacion == existing().fechaCreacion // Immutable created
+        && incoming().fechaActualizacion >= existing().fechaActualizacion // Allow same time for quick edits though > is safer, we'll use >= just in case of rapid clicks
+        && incoming().diff(existing()).affectedKeys().hasAny(['nombre', 'area', 'tipoProblema', 'descripcion', 'estatus', 'fechaActualizacion']);
+
+      allow delete: if isSignedIn()
+        && isValidId(solicitudId); // Allowed for any signed-in user temporarily
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "entities": {
+    "Solicitud": {
+      "title": "Solicitud",
+      "description": "Un ticket de soporte técnico.",
+      "type": "object",
+      "properties": {
+        "nombre": {
+          "type": "string",
+          "description": "Nombre del solicitante"
+        },
+        "area": {
+          "type": "string",
+          "description": "Área de la empresa"
+        },
+        "tipoProblema": {
+          "type": "string",
+          "description": "Categoría del problema"
+        },
+        "descripcion": {
+          "type": "string",
+          "description": "Detalle del problema"
+        },
+        "estatus": {
+          "type": "string",
+          "enum": ["Pendiente", "En proceso", "Atendido", "Cancelado"]
+        },
+        "fechaCreacion": {
+          "type": "number",
+          "description": "Timestamp de creación"
+        },
+        "fechaActualizacion": {
+          "type": "number",
+          "description": "Timestamp de última modificación"
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID de quien crea la solicitud"
+        }
+      },
+      "required": ["nombre", "area", "tipoProblema", "descripcion", "estatus", "fechaCreacion", "fechaActualizacion", "userId"]
+    }
+  },
+  "firestore": {
+    "solicitudes/{solicitudId}": {
+      "schema": "Solicitud",
+      "description": "Colección de tickets de soporte técnico"
+    }
+  }
+}
