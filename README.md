@@ -1,7 +1,7 @@
 # HelpDesk TI Móvil
 Una aplicación móvil (Android) para el registro y seguimiento de solicitudes de soporte técnico.
 
-## 📋 Resumen Ejecutivo y Objetivo
+## 📋 Resumen y Objetivo
 El proyecto **HelpDesk TI Móvil** tiene como objetivo dotar a una organización de una herramienta moderna y eficiente para el levantamiento de incidencias técnicas. Sustituye medios dispersos como llamadas o correos por un flujo centralizado, organizado y móvil con persistencia de datos en la nube (Firebase).
 
 ## 🛠 Stack Tecnológico
